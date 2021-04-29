@@ -31,13 +31,9 @@ namespace quewaner.Crawler.ParserHtml.www.meitu131.com
 
 
             FileInfo fileInfo = new FileInfo(_categoriesDataPath);
+            //缓存逻辑请自行处理，这里只是演示，每回都重新爬取类别信息
             List<Category> categories = new List<Category>();
-            categories = await ReadInfoAsync<List<Category>>(_categoriesDataPath);
-            //过去7天了，就重新加载
-            if ((DateTime.Now - fileInfo.LastAccessTime).Days < 7)
-            {
-                categories = await GetPageUrlsByCategoryAsync(htmlDocument);
-            }
+            categories = await GetPageUrlsByCategoryAsync(htmlDocument);
             if (categories is not null)
             {
                 //获取到写真列表数据的集合

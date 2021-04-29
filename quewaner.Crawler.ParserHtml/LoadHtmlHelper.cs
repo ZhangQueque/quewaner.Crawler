@@ -3,12 +3,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace quewaner.Crawler.ParserHtml
 {
+    class MyWebClient : WebClient
+    {
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
+            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+            return request;
+        }
+    }
     /// <summary>
     /// 下载HTML帮助类
     /// </summary>
@@ -21,9 +31,10 @@ namespace quewaner.Crawler.ParserHtml
         /// <returns></returns>
         public async static ValueTask<HtmlDocument> LoadHtmlFromUrlAsync(string url)
         {
-            HtmlWeb web = new HtmlWeb();
-             return await
-                 web?.LoadFromWebAsync(url);
+            var data = new MyWebClient()?.DownloadString(url);
+            var doc = new HtmlDocument();
+            doc.LoadHtml(data);
+            return doc;
         }
 
         /// <summary>
